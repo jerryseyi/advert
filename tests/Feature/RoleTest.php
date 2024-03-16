@@ -6,10 +6,18 @@ use Tests\TestCase;
 
 uses(RefreshDatabase::class, TestCase::class);
 
-test('', function () {
+test('assign user an admin role', function () {
     $user = User::factory()->create();
 
-    $user->assignRole('admin')->givePermissionTo('access all');
+    $user->makeAdmin();
 
-    $this->assertTrue($user->hasRole('admin'));
+    $this->assertTrue($user->isAdmin());
+});
+
+test('remove admin role from user', function () {
+    $user = User::factory()->create(['role' => 'admin']);
+
+    $user->removeAdmin();
+
+    $this->assertNotTrue($user->isAdmin());
 });
