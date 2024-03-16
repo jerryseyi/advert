@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Passport\Passport;
 use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
@@ -29,4 +30,16 @@ test('users with invalid credentials cannot login', function () {
     $response
         ->assertStatus(422)
         ->assertJson(['message' => 'Invalid Credentials']);
+});
+
+test('An authenticated user can logout', function () {
+    $user = User::factory()->create();
+    Passport::actingAs($user);
+
+    $response = $this->postJson('/api/logout');
+    $response
+        ->assertStatus(200);
+
+    $this->assertGuest();
+
 });
