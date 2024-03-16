@@ -33,15 +33,16 @@ class AuthController extends Controller
         ]);
 
         $data['password'] = bcrypt($request->password);
+        $data['role'] = 'customer';
         $user = User::create($data);
 
         $accessToken = $user->createToken('authToken')->accessToken;
-        return response(['user' => $user, 'access_token' => $accessToken]);
+        return response(['user' => $user, 'access_token' => $accessToken], 201);
     }
 
     public function logout(Request $request)
     {
-        $request->user()->token()->revoke();
+        $request->user()->tokens()->delete();
         return response(['message' => 'Successfully logged out']);
     }
 }

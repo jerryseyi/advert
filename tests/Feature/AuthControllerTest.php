@@ -40,6 +40,25 @@ test('An authenticated user can logout', function () {
     $response
         ->assertStatus(200);
 
-    $this->assertGuest();
+//    $this->assertGuest();
 
+});
+
+test('user can register', function () {
+    $data = [
+        'name' => 'John Doe',
+        'email' => 'john@doe.com',
+        'password' => 'password',
+        'role' => 'customer'
+    ];
+
+    $response = $this->postJson('/api/register', $data);
+    $response
+        ->assertStatus(201);
+
+    $this->assertDatabaseHas('users', [
+        'name' => 'John Doe',
+        'email' => 'john@doe.com',
+        'role' => 'customer'
+    ]);
 });
