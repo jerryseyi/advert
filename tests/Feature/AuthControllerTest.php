@@ -15,12 +15,18 @@ test('users with valid credentials can login', function () {
         'password' => 'password',
     ]);
 
-    $response->assertStatus(200)
+    $response
+        ->assertStatus(200)
         ->assertJsonStructure(['user', 'access_token']);
 });
 
 test('users with invalid credentials cannot login', function () {
-    $response = $this->postJson('/api/json', [
-
+    $response = $this->postJson('/api/login', [
+        'email' => 'error@doe.com',
+        'password' => 'password'
     ]);
+
+    $response
+        ->assertStatus(422)
+        ->assertJson(['message' => 'Invalid Credentials']);
 });
