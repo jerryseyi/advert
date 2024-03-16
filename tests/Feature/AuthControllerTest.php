@@ -1,19 +1,26 @@
 <?php
+
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-test('users can login with valid credentials', function () {
-   $user = User::factory()->create([
-       'email' => 'john@doe.com',
-       'password' => bcrypt('password')
-   ]);
+uses(TestCase::class, RefreshDatabase::class);
 
-   $response = $this->postJson('/api/login', [
-      'email' => 'john@doe.com',
-      'password' => 'password'
-   ]);
+test('users with valid credentials can login', function () {
 
-   $response
-       ->assertStatus(200)
-       ->assertJsonStructure(['user' => 'access_token']);
+    User::factory()->create(['email' => 'john@doe.com']);
+
+    $response = $this->postJson('/api/login', [
+        'email' => 'john@doe.com',
+        'password' => 'password',
+    ]);
+
+    $response->assertStatus(200)
+        ->assertJsonStructure(['user', 'access_token']);
+});
+
+test('users with invalid credentials cannot login', function () {
+    $response = $this->postJson('/api/json', [
+
+    ]);
 });
