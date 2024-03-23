@@ -11,9 +11,9 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('uid')->unique();
-            $table->json('upload_ids');
+            $table->json('upload_ids')->nullable();
             $table->string('name');
-            $table->string('status');
+            $table->boolean('disabled')->default(false);
             $table->date('expiration_date');
             $table->string('location');
             $table->timestamps();

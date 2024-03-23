@@ -15,10 +15,16 @@ class Device extends Model
     protected $casts = [
         'uploads_id' => 'array',
         'expiration_date' => 'date',
+        'disabled' => 'boolean'
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function upload(): BelongsTo
+    {
+        return $this->belongsTo(Upload::class);
     }
 }

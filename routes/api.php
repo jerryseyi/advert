@@ -23,7 +23,8 @@ Route::middleware('auth:api')->group(function () {
 
    Route::post('/{user}/uploads', [\App\Http\Controllers\UploadController::class, 'store'])->name('upload.store');
    Route::patch('/{user}/uploads/{upload}', [\App\Http\Controllers\UploadController::class, 'update'])->name('upload.update');
-   Route::post('/uploads/{upload}/exclude', []);
+   Route::post('/device/{device}/uploads/{upload}/exclude', [\App\Http\Controllers\ExcludeUploadController::class, 'store'])->name('exclude-upload.store');
+   Route::post('/device/{device}/disconnect', [\App\Http\Controllers\DeviceStateController::class, 'disconnect'])->name('device.disconnect');
 
    Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 });

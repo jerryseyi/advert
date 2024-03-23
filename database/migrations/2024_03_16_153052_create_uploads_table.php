@@ -10,6 +10,7 @@ return new class extends Migration {
         Schema::create('uploads', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
+            $table->foreignId('device_id');
             $table->string('image');
             $table->string('size');
             $table->string('type');

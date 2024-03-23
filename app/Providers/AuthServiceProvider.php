@@ -24,6 +24,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \Gate::define('isAdmin', function ($user) {
+           return $user->isAdmin();
+        });
     }
 }

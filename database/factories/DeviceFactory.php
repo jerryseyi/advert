@@ -16,9 +16,7 @@ class DeviceFactory extends Factory
         return [
             'user_id' => User::factory()->create()->id,
             'uid' => $this->faker->randomNumber(8),
-            'uploads_id' => json_encode([1, 2, 3]),
             'name' => $this->faker->name(),
-            'status' => $this->faker->word(),
             'expiration_date' => Carbon::now(),
             'location' => $this->faker->address(),
             'created_at' => Carbon::now(),

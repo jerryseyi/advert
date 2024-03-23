@@ -1,8 +1,10 @@
 <?php
 
+use App\Models\Device;
 use App\Models\Upload;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Laravel\Passport\Passport;
 use Tests\TestCase;
 
 uses(RefreshDatabase::class, TestCase::class);
@@ -17,8 +19,10 @@ test('users can upload image', function () {
 
     Storage::fake('public');
 
-    \Laravel\Passport\Passport::actingAs($this->admin);
+    Passport::actingAs($this->admin);
     $id = $this->admin->id;
+
+    Device::factory()->create(['user_id' => $this->admin->id]);
 
     $file = UploadedFile::fake()->image('test.jpg');
     $imageName = time().'.'.$file->getClientOriginalExtension();
@@ -40,13 +44,17 @@ test('users can upload image', function () {
 
 test('a user can update an existing image', function () {
 
-    \Laravel\Passport\Passport::actingAs($this->user);
+    Passport::actingAs($this->user);
 
     // use fake storage for testing.
     Storage::fake('public');
+    $device = Device::factory()->create([
+       'user_id' => $this->user->id,
+    ]);
 
     $upload = Upload::factory()->create([
         'user_id' => $this->user->id,
+        'device_id' => $device->id,
         'image' => 'test.jpg',
     ]);
 
@@ -61,4 +69,29 @@ test('a user can update an existing image', function () {
         ->assertJson(['message' => 'Updated Successfully']);
 
 //    $this->assertEquals('storage/uploads/' . $newImage->hashName(), $upload->refresh()->image);
+});
+
+test('it can exclude an image from a device', function () {
+    Storage::fake('public');
+
+    Passport::actingAs($this->admin);
+
+    $device = Device::factory()->create(['user_id' => $this->user->id]);
+
+    $upload = Upload::factory()->create([
+        'user_id' => $this->user->id,
+        'device_id' => $device->id,
+        'image' => 'test.jpg',
+    ]);
+
+    $response = $this->postJson(route('exclude-upload.store', [$device, $upload]));
+
+    $response
+        ->assertStatus(200)
+        ->assertJson(['message' => 'image excluded successfully']);
+
+    $device->refresh();
+
+    expect($device->upload_ids)->toContain($upload->id);
+
 });

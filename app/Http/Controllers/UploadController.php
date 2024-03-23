@@ -46,6 +46,7 @@ class UploadController extends Controller
         // create a new upload record.
         $upload = new Upload();
         $upload->user_id = $user->id;
+        $upload->device_id = $user->device()->first()->id;
         $upload->image = $imageName;
         $upload->size = $image->getSize();
         $upload->type = $image->getType();
