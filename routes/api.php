@@ -21,8 +21,9 @@ Route::middleware('auth:api')->group(function () {
       return $request->user();
    });
 
-   Route::post('/{user}/uploads', [\App\Http\Controllers\UploadController::class, 'store'])->name('upload.store');
-   Route::patch('/{user}/uploads/{upload}', [\App\Http\Controllers\UploadController::class, 'update'])->name('upload.update');
+    Route::post('/{user}/uploads', [\App\Http\Controllers\UploadController::class, 'store'])->name('upload.store');
+    Route::post('/{user}/uploads/verify', [])->name('uploads.verify');
+    Route::patch('/{user}/uploads/{upload}', [\App\Http\Controllers\UploadController::class, 'update'])->name('upload.update');
    Route::post('/device/{device}/uploads/{upload}/exclude', [\App\Http\Controllers\ExcludeUploadController::class, 'store'])->name('exclude-upload.store');
    Route::post('/device/{device}/disconnect', [\App\Http\Controllers\DeviceStateController::class, 'disconnect'])->name('device.disconnect');
 

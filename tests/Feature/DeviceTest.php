@@ -26,3 +26,4 @@ test('it disconnect a device', function () {
        'disabled' => true
     ]);
 });
+
