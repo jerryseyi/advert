@@ -45,6 +45,9 @@ test('An authenticated user can logout', function () {
 });
 
 test('user can register', function () {
+    $user = User::factory()->create(['role' => 'admin']);
+    Passport::actingAs($user);
+
     $data = [
         'name' => 'John Doe',
         'email' => 'john@doe.com',

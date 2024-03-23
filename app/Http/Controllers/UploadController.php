@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Upload;
 use App\Models\User;
+use App\Policies\UploadPolicy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -11,6 +12,8 @@ class UploadController extends Controller
 {
     public function store(User $user, Request $request)
     {
+        $this->authorize('create', Upload::class);
+
         $rules = [
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
         ];
@@ -28,7 +31,7 @@ class UploadController extends Controller
             return response()->json(['error' => $validator->errors()->first()], 422);
         }
 
-        $maxUploads = $user->max_uploads;
+        $maxUploads = $user->max_upload;
 
         // abort if maximum upload limit reached.
         if ($user->uploads()->count() >= $maxUploads) {
@@ -49,5 +52,26 @@ class UploadController extends Controller
         $upload->save();
 
         return response()->json(['message' => 'Upload Successful.']);
+    }
+
+    public function update(Request $request, User $user, Upload $upload)
+    {
+        $this->authorize('update', $upload);
+
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $upload = Upload::find($upload->id);
+
+        $image = $request->file('image');
+        $imageName = time().'.'.$image->extension(); // Generate a unique name for the image
+        $image->storeAs('public/uploads', $imageName); // Store the image in the public storage directory
+
+        // Update image path in the database
+        $upload->image = 'storage/uploads/'.$imageName;
+        $upload->save();
+
+        return response()->json(['message' => 'Updated Successfully']);
     }
 }

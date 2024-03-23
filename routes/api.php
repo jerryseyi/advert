@@ -15,13 +15,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::post('login', [AuthController::class, 'login'])->name('auth.login');
-Route::post('register', [AuthController::class, 'register'])->name('auth.register');
 
 Route::middleware('auth:api')->group(function () {
    Route::get('/user', function (Request $request) {
       return $request->user();
    });
 
+   Route::post('/{user}/uploads', [\App\Http\Controllers\UploadController::class, 'store'])->name('upload.store');
+   Route::patch('/{user}/uploads/{upload}', [\App\Http\Controllers\UploadController::class, 'update'])->name('upload.update');
+   Route::post('/uploads/{upload}/exclude', []);
+
    Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+});
+
+Route::middleware(['auth:api', 'is.admin'])->group(function () {
+    Route::post('register', [AuthController::class, 'register'])->name('auth.register');
+
 });
 
