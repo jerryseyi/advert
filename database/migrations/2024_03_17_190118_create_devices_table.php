@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->string('uid')->unique();
             $table->json('upload_ids')->nullable();
             $table->string('name');
-            $table->boolean('disabled')->default(false);
+            $table->boolean('disabled')->default(true);
             $table->date('expiration_date');
             $table->string('location');
             $table->timestamps();

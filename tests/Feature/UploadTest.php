@@ -102,10 +102,10 @@ test('it can exclude an image from a device', function () {
 test('set uploads requirements', function () {
     Passport::actingAs($this->admin);
 
-    $date = \Carbon\Carbon::now()->addMonth();
+    $date = \Carbon\Carbon::now()->addMonth()->toDateString();
 
     $response = $this->postJson(route('upload.requirements', $this->user), [
-       'max_uploads' => 2,
+       'max_upload' => 2,
        'max_tries' => 2,
        'expiration_date' => $date
     ]);
@@ -119,5 +119,47 @@ test('set uploads requirements', function () {
 
     $this->assertEquals($this->user->max_upload, 2);
     $this->assertEquals($this->user->max_tries, 2);
-    $this->assertEquals($this->device->expiration_date, $date);
+    $this->assertEquals($this->device->expiration_date, \Carbon\Carbon::parse($date));
+});
+
+
+test('allows users upload to be viewable', function () {
+    Passport::actingAs($this->admin);
+
+    $upload = Upload::factory()->create(['user_id' => $this->user->id, 'device_id' => $this->device->id]);
+
+    $this->assertEquals($this->device->disabled, true);
+
+    $response = $this->postJson(route('upload.enable', $upload));
+
+    $response
+        ->assertStatus(200)
+        ->assertJson(['message' => 'Device status updated']);
+
+    $this->device->refresh();
+
+    $this->assertEquals($this->device->disabled, false);
+});
+
+test('fetch all images based on specific conditions', function () {
+    Passport::actingAs($this->admin);
+
+    $user = User::factory()->create(['max_upload' => 2, 'max_tries' => 2, 'upload_count' => 0]);
+    $user2 = User::factory()->create(['max_upload' => 2, 'max_tries' => 2, 'upload_count' => 0]);
+
+    $device = Device::factory()->create(['user_id' => $user->id, 'expiration_date' => \Carbon\Carbon::now()->addDay(), 'disabled' => false]);
+    $device2 = Device::factory()->create(['user_id' => $user2->id, 'expiration_date' => \Carbon\Carbon::now()->subWeek()]);
+
+    Upload::factory(2)->create(['user_id' => $user->id, 'device_id' => $device->id]);
+    Upload::factory(1)->create(['user_id' => $user2->id, 'device_id' => $device2->id]);
+
+
+    $uploads = $this->withHeaders([
+                        'Device' => $device->uid
+                    ])
+                    ->getJson(route('upload.index'));
+
+    expect($uploads)->assertJsonCount(2);
+
+    dd($uploads->json());
 });

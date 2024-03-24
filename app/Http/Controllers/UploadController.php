@@ -2,14 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Device;
 use App\Models\Upload;
 use App\Models\User;
 use App\Policies\UploadPolicy;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class UploadController extends Controller
 {
+    public function index(Request $request)
+    {
+        $device = Device::where('uid', $request->header('Device'))->firstOrFail();
+
+        return Upload::whereHas('device', function ($query) {
+                $query
+                    ->where('expiration_date', '>', Carbon::now())
+                    ->where('disabled', '==', false);
+            })
+            ->get();
+//        return Upload::whereHas('user', function ($query) {
+//                $query
+//                    ->where('max_upload', '>', 1)
+//                    ->where('max_tries', '>', 1);
+//            })
+//            ->whereHas('device', function ($query) {
+//                $query
+//                    ->where('expiration_date', '<', Carbon::now())
+//                    ->where('disabled', '==', false);
+//            })
+//            ->get();
+    }
     public function store(User $user, Request $request)
     {
         $this->authorize('create', Upload::class);
@@ -34,7 +58,7 @@ class UploadController extends Controller
         $maxUploads = $user->max_upload;
 
         // abort if maximum upload limit reached.
-        if ($user->uploads()->count() >= $maxUploads) {
+        if ($user->upload_count >= $maxUploads) {
             return response()->json(['error' => 'Maximum upload limit reached.'], 403);
         }
 
@@ -51,6 +75,9 @@ class UploadController extends Controller
         $upload->size = $image->getSize();
         $upload->type = $image->getType();
         $upload->save();
+
+        // increment the count
+        $user->increment('upload_count');
 
         return response()->json(['message' => 'Upload Successful.']);
     }

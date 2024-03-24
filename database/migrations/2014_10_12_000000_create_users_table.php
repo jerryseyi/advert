@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('role');
+            $table->string('upload_count')->default(0);
             $table->string('max_upload')->default(1);
             $table->string('max_tries')->default(1);
             $table->rememberToken();
