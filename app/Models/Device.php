@@ -24,7 +24,7 @@ class Device extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function upload(): HasMany
+    public function uploads(): HasMany
     {
         return $this->hasMany(Upload::class);
     }

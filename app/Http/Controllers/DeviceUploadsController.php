@@ -9,7 +9,10 @@ use Illuminate\Support\Facades\Validator;
 
 class DeviceUploadsController extends Controller
 {
-
+    public function index(Device $device, Request $request)
+    {
+        return $device->uploads;
+    }
     public function store(Device $device, Request $request)
     {
 //        $this->authorize('create', Upload::class);
