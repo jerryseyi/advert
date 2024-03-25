@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Device;
 use App\Models\Upload;
 use App\Models\User;
+use App\Models\View;
 use App\Policies\UploadPolicy;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -15,6 +16,18 @@ class UploadController extends Controller
     public function index(Request $request)
     {
         $device = Device::where('uid', $request->header('Device'))->firstOrFail();
+
+        $view = View::where('device_id', $device->id)->first();
+
+        if ($view) {
+            $view->increment('count');
+        } else {
+            View::create([
+               'device_id' => $device->id,
+               'user_id' => $device->user_id ?? null,
+               'count' => 1
+            ]);
+        }
 
         return Upload::whereHas('device', function ($query) {
                 $query

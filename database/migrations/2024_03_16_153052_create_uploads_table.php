@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->string('image');
             $table->string('size');
             $table->string('type');
+            $table->boolean('disabled')->default(true);
             $table->timestamps();
         });
     }

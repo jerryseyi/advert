@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('views', function (Blueprint $table) {
             $table->id();
             $table->foreignId('device_id');
-            $table->foreignId('user_id');
+            $table->foreignId('user_id')->nullable();
             $table->string('count');
             $table->timestamps();
         });
