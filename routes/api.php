@@ -14,14 +14,15 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
 Route::post('login', [AuthController::class, 'login'])->name('auth.login');
+
+Route::get('/uploads', [\App\Http\Controllers\UploadController::class, 'index'])->name('upload.index');
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-
-    Route::get('/uploads', [\App\Http\Controllers\UploadController::class, 'index'])->name('upload.index');
 
     Route::post('/{user}/uploads', [\App\Http\Controllers\UploadController::class, 'store'])->name('upload.store');
     Route::post('/{user}/uploads/verify', [\App\Http\Controllers\UploadVerificationController::class, 'store'])->name('upload.requirements');
@@ -30,11 +31,20 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/device/{device}/disconnect', [\App\Http\Controllers\DeviceStateController::class, 'disconnect'])->name('device.disconnect');
 
     Route::post('/uploads/{upload}/enable', [\App\Http\Controllers\UploadStatusController::class, 'store'])->name('upload.enable');
-    Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+    Route::delete('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 });
 
 Route::middleware(['auth:api', 'is.admin'])->group(function () {
     Route::post('register', [AuthController::class, 'register'])->name('auth.register');
 
+    Route::get('users', [\App\Http\Controllers\UsersController::class, 'index']);
+
+    Route::get('/devices', [\App\Http\Controllers\DeviceController::class, 'index']);
+    Route::post('/devices', [\App\Http\Controllers\DeviceController::class, 'store']);
+    Route::get('/devices/{device}', [\App\Http\Controllers\DeviceController::class, 'show']);
+    Route::patch('/devices/{device}', [\App\Http\Controllers\DeviceController::class, 'update']);
+
+    Route::post('/devices/{device}/uploads', [\App\Http\Controllers\DeviceUploadsController::class, 'store']);
+    Route::get('/devices/{device}/uploads', [\App\Http\Controllers\DeviceUploadsController::class, 'index']);
 });
 

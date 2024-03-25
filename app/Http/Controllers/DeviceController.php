@@ -9,16 +9,15 @@ class DeviceController extends Controller
 {
     public function index()
     {
-        return Device::all();
+        return Device::with('user')->get();
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'user_id' => ['required', 'integer'],
+            'uid' => 'required',
             'name' => ['required'],
-            'status' => ['required'],
-            'expiration_date' => ['required', 'date'],
+            'location' => ['required']
         ]);
 
         return Device::create($data);
@@ -32,10 +31,9 @@ class DeviceController extends Controller
     public function update(Request $request, Device $device)
     {
         $data = $request->validate([
-            'user_id' => ['required', 'integer'],
             'name' => ['required'],
-            'status' => ['required'],
-            'expiration_date' => ['required', 'date'],
+            'location' => ['required'],
+            'uid' => ['required'],
         ]);
 
         $device->update($data);

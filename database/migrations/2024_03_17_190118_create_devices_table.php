@@ -9,12 +9,12 @@ return new class extends Migration {
     {
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('uid')->unique();
             $table->json('upload_ids')->nullable();
             $table->string('name');
             $table->boolean('disabled')->default(true);
-            $table->date('expiration_date');
+            $table->date('expiration_date')->nullable();
             $table->string('location');
             $table->timestamps();
         });

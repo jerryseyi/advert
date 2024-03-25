@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Device;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,9 +33,19 @@ class AuthController extends Controller
             'password' => 'required|min:6'
         ]);
 
+        $device = $request->validate([
+           'device_id' => 'required'
+        ]);
+
+        $device = Device::findOrFail($device['device_id']);
+
         $data['password'] = bcrypt($request->password);
         $data['role'] = 'customer';
         $user = User::create($data);
+
+        $device->update([
+           'user_id' =>  $user->id
+        ]);
 
         $accessToken = $user->createToken('authToken')->accessToken;
         return response(['user' => $user, 'access_token' => $accessToken], 201);
