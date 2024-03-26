@@ -8,9 +8,10 @@ class UploadStatusController extends Controller
 {
     public function store(Upload $upload)
     {
-        $upload->device()->update([
-            'disabled' => false
+        $upload->update([
+            'disabled' => ! $upload->disabled
         ]);
+
 
         return response()->json(['message' => 'Device status updated']);
     }

@@ -30,7 +30,6 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/device/{device}/uploads/{upload}/exclude', [\App\Http\Controllers\ExcludeUploadController::class, 'store'])->name('exclude-upload.store');
     Route::post('/device/{device}/disconnect', [\App\Http\Controllers\DeviceStateController::class, 'disconnect'])->name('device.disconnect');
 
-    Route::post('/uploads/{upload}/enable', [\App\Http\Controllers\UploadStatusController::class, 'store'])->name('upload.enable');
     Route::delete('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 });
 
@@ -38,6 +37,7 @@ Route::middleware(['auth:api', 'is.admin'])->group(function () {
     Route::post('register', [AuthController::class, 'register'])->name('auth.register');
 
     Route::get('users', [\App\Http\Controllers\UsersController::class, 'index']);
+    Route::patch('/users/{user}', [\App\Http\Controllers\UsersController::class, 'update']);
 
     Route::get('/devices', [\App\Http\Controllers\DeviceController::class, 'index']);
     Route::post('/devices', [\App\Http\Controllers\DeviceController::class, 'store']);
@@ -46,5 +46,8 @@ Route::middleware(['auth:api', 'is.admin'])->group(function () {
 
     Route::post('/devices/{device}/uploads', [\App\Http\Controllers\DeviceUploadsController::class, 'store']);
     Route::get('/devices/{device}/uploads', [\App\Http\Controllers\DeviceUploadsController::class, 'index']);
+    Route::get('/devices/{device}/stats', [\App\Http\Controllers\StatusController::class, 'index']);
+
+    Route::post('/uploads/{upload}/enable', [\App\Http\Controllers\UploadStatusController::class, 'store'])->name('upload.enable');
 });
 
