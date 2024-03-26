@@ -24,6 +24,7 @@ Route::middleware('auth:api')->group(function () {
         return $request->user();
     });
 
+    Route::get('/{user}/stats', [\App\Http\Controllers\StatusController::class, '']);
     Route::post('/{user}/uploads', [\App\Http\Controllers\UploadController::class, 'store'])->name('upload.store');
     Route::post('/{user}/uploads/verify', [\App\Http\Controllers\UploadVerificationController::class, 'store'])->name('upload.requirements');
     Route::patch('/{user}/uploads/{upload}', [\App\Http\Controllers\UploadController::class, 'update'])->name('upload.update');
