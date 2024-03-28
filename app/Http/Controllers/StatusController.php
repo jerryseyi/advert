@@ -9,13 +9,13 @@ class StatusController extends Controller
 {
     public function index(Device $device)
     {
-        return $device->with(['user', 'uploads'])->first();
+        return $device->load(['user', 'uploads']);
     }
 
     public function stats(User $user)
     {
-        $device = Device::where('user_id', $user->id)->first();
+        $device = Device::where('user_id', auth()->id())->first();
 
-        return $device->with(['user', 'uploads'])->first();
+        return $device->load(['user', 'uploads']);
     }
 }

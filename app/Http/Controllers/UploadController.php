@@ -23,16 +23,24 @@ class UploadController extends Controller
             $view->increment('count');
         } else {
             View::create([
-               'device_id' => $device->id,
-               'user_id' => $device->user_id ?? null,
-               'count' => 1
+                'device_id' => $device->id,
+                'user_id' => $device->user_id ?? null,
+                'count' => 1
             ]);
         }
 
-        return Upload::whereHas('device', function ($query) {
-                $query
-                    ->where('expiration_date', '>', Carbon::now())
-                    ->where('disabled', '==', false);
+        $deviceIdsToExclude = json_decode($device->upload_ids, true) ?? [];
+
+        return Upload::query()
+            ->where('disabled', false)
+            ->whereDoesntHave('device', function ($query) use ($deviceIdsToExclude) {
+                if (! empty($deviceIdsToExclude)) {
+                    $query->where(function ($subQuery) use ($deviceIdsToExclude) {
+                        foreach ($deviceIdsToExclude as $deviceId) {
+                            $subQuery->whereJsonContains('upload_ids', $deviceId);
+                        }
+                    });
+                }
             })
             ->get();
 //        return Upload::whereHas('user', function ($query) {
@@ -47,6 +55,7 @@ class UploadController extends Controller
 //            })
 //            ->get();
     }
+
     public function store(User $user, Request $request)
     {
         $this->authorize('create', Upload::class);
@@ -77,7 +86,7 @@ class UploadController extends Controller
 
         // store the upload file.
         $image = $request->file('image');
-        $imageName = time().'.'.$image->getClientOriginalExtension();
+        $imageName = time() . '.' . $image->getClientOriginalExtension();
         $image->storeAs('public/uploads', $imageName);
 
         // create a new upload record.
@@ -106,11 +115,11 @@ class UploadController extends Controller
         $upload = Upload::find($upload->id);
 
         $image = $request->file('image');
-        $imageName = time().'.'.$image->extension(); // Generate a unique name for the image
+        $imageName = time() . '.' . $image->extension(); // Generate a unique name for the image
         $image->storeAs('public/uploads', $imageName); // Store the image in the public storage directory
 
         // Update image path in the database
-        $upload->image = 'storage/uploads/'.$imageName;
+        $upload->image = 'storage/uploads/' . $imageName;
         $upload->save();
 
         return response()->json(['message' => 'Updated Successfully']);
