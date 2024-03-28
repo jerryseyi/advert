@@ -12,7 +12,7 @@ class Upload extends Model
     use HasFactory;
     protected $guarded = [];
 
-    protected $appends = ['imagePath'];
+    protected $appends = ['imagePath', 'excluded'];
 
     public function device(): BelongsTo
     {
@@ -27,5 +27,10 @@ class Upload extends Model
     public function getImagePathAttribute(): string
     {
         return asset('/storage/uploads') . '/' . $this->image;
+    }
+
+    public function getExcludedAttribute(): bool
+    {
+        return Device::whereJsonContains('upload_ids', $this->id)->exists();
     }
 }
