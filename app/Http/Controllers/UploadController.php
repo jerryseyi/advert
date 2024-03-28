@@ -43,17 +43,6 @@ class UploadController extends Controller
                 }
             })
             ->get();
-//        return Upload::whereHas('user', function ($query) {
-//                $query
-//                    ->where('max_upload', '>', 1)
-//                    ->where('max_tries', '>', 1);
-//            })
-//            ->whereHas('device', function ($query) {
-//                $query
-//                    ->where('expiration_date', '<', Carbon::now())
-//                    ->where('disabled', '==', false);
-//            })
-//            ->get();
     }
 
     public function store(User $user, Request $request)
