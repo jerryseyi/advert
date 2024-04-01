@@ -25,7 +25,7 @@ class DeviceController extends Controller
 
     public function show(Device $device)
     {
-        return $device;
+        return $device->load('user');
     }
 
     public function update(Request $request, Device $device)

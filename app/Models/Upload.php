@@ -26,7 +26,7 @@ class Upload extends Model
 
     public function getImagePathAttribute(): string
     {
-        return asset('/storage/uploads') . '/' . $this->image;
+        return asset('/uploads') . '/' . $this->image;
     }
 
     public function getExcludedAttribute(): bool

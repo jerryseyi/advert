@@ -76,7 +76,7 @@ class UploadController extends Controller
         // store the upload file.
         $image = $request->file('image');
         $imageName = time() . '.' . $image->getClientOriginalExtension();
-        $image->storeAs('public/uploads', $imageName);
+        $image->storeAs('uploads', $imageName, 'public');
 
         // create a new upload record.
         $upload = new Upload();
