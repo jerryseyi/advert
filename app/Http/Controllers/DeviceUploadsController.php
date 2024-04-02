@@ -60,4 +60,25 @@ class DeviceUploadsController extends Controller
 
         return response()->json(['message' => 'Upload Successful.']);
     }
+
+    public function update(Request $request, Device $device, Upload $upload)
+    {
+        $this->authorize('update', $upload);
+
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $upload = Upload::find($upload->id);
+
+        $image = $request->file('image');
+        $imageName = time() . '.' . $image->extension(); // Generate a unique name for the image
+        $image->storeAs('public/uploads', $imageName); // Store the image in the public storage directory
+
+        // Update image path in the database
+        $upload->image = '/uploads/' . $imageName;
+        $upload->save();
+
+        return response()->json(['message' => 'Updated Successfully']);
+    }
 }
