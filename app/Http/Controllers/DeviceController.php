@@ -17,7 +17,8 @@ class DeviceController extends Controller
         $data = $request->validate([
             'uid' => 'required',
             'name' => ['required'],
-            'location' => ['required']
+            'location' => ['required'],
+            'expiration_date' => ['required']
         ]);
 
         return Device::create($data);
