@@ -95,7 +95,9 @@ class UploadController extends Controller
 
     public function update(Request $request, User $user, Upload $upload)
     {
-        $this->authorize('update', $upload);
+        if  ($user->max_tries <= $user->max_tries_count) {
+            abort(403, "You have exceeded the number of updates");
+        }
 
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -108,8 +110,10 @@ class UploadController extends Controller
         $image->storeAs('public/uploads', $imageName); // Store the image in the public storage directory
 
         // Update image path in the database
-        $upload->image = 'storage/uploads/' . $imageName;
+        $upload->image = 'uploads/' . $imageName;
         $upload->save();
+
+        $user->increment('max_tries_count');
 
         return response()->json(['message' => 'Updated Successfully']);
     }

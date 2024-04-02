@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('upload_count')->default(0);
             $table->string('max_upload')->default(1);
             $table->string('max_tries')->default(1);
+            $table->string('max_tries_count')->default(1);
             $table->rememberToken();
             $table->timestamps();
         });
