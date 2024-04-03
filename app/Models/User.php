@@ -64,7 +64,7 @@ class User extends Authenticatable
         return $this->hasMany(Upload::class);
     }
 
-    public function devices(): HasMany
+    public function device(): HasMany
     {
         return $this->hasMany(Device::class);
     }

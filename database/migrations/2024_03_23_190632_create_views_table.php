@@ -11,6 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('device_id');
             $table->foreignId('user_id')->nullable();
+            $table->foreignId('upload_id')->nullable();
             $table->string('count');
             $table->timestamps();
         });

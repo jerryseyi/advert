@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('size');
             $table->string('type');
             $table->boolean('disabled')->default(true);
+            $table->string('max_tries')->default(0);
             $table->timestamps();
         });
     }

@@ -13,7 +13,6 @@ class UploadVerificationController extends Controller
         $data = $request->validate([
             'max_upload' => 'required',
             'max_tries' => 'required',
-            'expiration_date' => 'required'
         ]);
 
         $user->update([
@@ -21,9 +20,9 @@ class UploadVerificationController extends Controller
             'max_tries' => $data['max_tries']
         ]);
 
-        $user->device()->update([
-           'expiration_date' => Carbon::parse($data['expiration_date'])
-        ]);
+//        $user->device()->update([
+//           'expiration_date' => Carbon::parse($data['expiration_date'])
+//        ]);
 
         return response()->json(['message' => 'Requirements set successfully']);
     }

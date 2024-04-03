@@ -17,21 +17,9 @@ class UploadController extends Controller
     {
         $device = Device::where('uid', $request->header('Device'))->firstOrFail();
 
-        $view = View::where('device_id', $device->id)->first();
-
-        if ($view) {
-            $view->increment('count');
-        } else {
-            View::create([
-                'device_id' => $device->id,
-                'user_id' => $device->user_id ?? null,
-                'count' => 1
-            ]);
-        }
-
         $deviceIdsToExclude = json_decode($device->upload_ids, true) ?? [];
 
-        return Upload::query()
+        $uploads = Upload::query()
             ->where('disabled', false)
             ->whereDoesntHave('device', function ($query) use ($deviceIdsToExclude) {
                 if (! empty($deviceIdsToExclude)) {
@@ -43,6 +31,25 @@ class UploadController extends Controller
                 }
             })
             ->get();
+
+        $uploads->each(function ($item) use ($device) {
+            $view = View::where('upload_id', '=', $item->id)->first();
+
+            if ($view) {
+                $view->increment('count');
+            } else {
+                if (isset($device)) {
+                    View::create([
+                        'device_id' => $device->id,
+                        'user_id' => $device->user_id ?? null,
+                        'upload_id' => $item->id,
+                        'count' => 1
+                    ]);
+                }
+            }
+        });
+
+        return $uploads;
     }
 
     public function store(User $user, Request $request)
@@ -95,7 +102,7 @@ class UploadController extends Controller
 
     public function update(Request $request, User $user, Upload $upload)
     {
-        if  ($user->max_tries <= $user->max_tries_count) {
+        if  ($user->max_tries <= $upload->max_tries) {
             abort(403, "You have exceeded the number of updates");
         }
 
@@ -107,13 +114,12 @@ class UploadController extends Controller
 
         $image = $request->file('image');
         $imageName = time() . '.' . $image->extension(); // Generate a unique name for the image
-        $image->storeAs('public/uploads', $imageName); // Store the image in the public storage directory
+        $image->storeAs('uploads', $imageName, 'public'); // Store the image in the public storage directory
 
         // Update image path in the database
-        $upload->image = 'uploads/' . $imageName;
+        $upload->image = $imageName;
+        $upload->max_tries = $upload->max_tries + 1;
         $upload->save();
-
-        $user->increment('max_tries_count');
 
         return response()->json(['message' => 'Updated Successfully']);
     }

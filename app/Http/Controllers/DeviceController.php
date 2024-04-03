@@ -35,6 +35,7 @@ class DeviceController extends Controller
             'name' => ['required'],
             'location' => ['required'],
             'uid' => ['required'],
+            'expiration_date' => ['required']
         ]);
 
         $device->update($data);
