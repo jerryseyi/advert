@@ -41,6 +41,8 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    protected $appends = ['deviceCount'];
+
     public function makeAdmin(): void
     {
         $this->role = 'admin';
@@ -69,4 +71,8 @@ class User extends Authenticatable
         return $this->hasMany(Device::class);
     }
 
+    public function getDeviceCountAttribute()
+    {
+        return $this->device()->count();
+    }
 }
