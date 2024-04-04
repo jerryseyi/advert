@@ -9,6 +9,7 @@ use App\Models\View;
 use App\Policies\UploadPolicy;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class UploadController extends Controller
@@ -21,13 +22,11 @@ class UploadController extends Controller
 
         $uploads = Upload::query()
             ->where('disabled', false)
-            ->whereDoesntHave('device', function ($query) use ($deviceIdsToExclude) {
+            ->WhereHas('device', function ($query) use ($deviceIdsToExclude) {
                 if (! empty($deviceIdsToExclude)) {
-                    $query->where(function ($subQuery) use ($deviceIdsToExclude) {
-                        foreach ($deviceIdsToExclude as $deviceId) {
-                            $subQuery->whereJsonContains('upload_ids', $deviceId);
+                    foreach ($deviceIdsToExclude as $deviceId) {
+                            $query->whereJsonDoesntContain('upload_ids', $deviceId);
                         }
-                    });
                 }
             })
             ->get();
@@ -43,6 +42,7 @@ class UploadController extends Controller
                         'device_id' => $device->id,
                         'user_id' => $device->user_id ?? null,
                         'upload_id' => $item->id,
+                        'customer_id' => $item->user_id,
                         'count' => 1
                     ]);
                 }
