@@ -29,6 +29,11 @@ class Device extends Model
         return $this->hasMany(Upload::class);
     }
 
+    public function views(): HasMany
+    {
+        return $this->hasMany(View::class);
+    }
+
 //    public function getUploadIdsAttribute($value)
 //    {
 //        return json_decode($value, true);

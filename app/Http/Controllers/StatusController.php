@@ -14,6 +14,7 @@ class StatusController extends Controller
 
         $counts = View::query()
             ->where('customer_id', '=', $device->user_id)
+            ->with('device:id,name')
             ->select('device_id', View::raw('SUM(count) as count'))
             ->groupBy('device_id')
             ->get();
@@ -23,8 +24,10 @@ class StatusController extends Controller
 
     public function stats(User $user)
     {
-        $device = Device::where('user_id', auth()->id())->first();
-
-        return $device->load(['user', 'uploads']);
+        return $user->load(['device.views' => function ($query) use ($user) {
+            $query
+                ->where('customer_id', '=', $user->id)
+                ->select('device_id', View::raw('SUM(count) as count'));
+        }, 'uploads']);
     }
 }
