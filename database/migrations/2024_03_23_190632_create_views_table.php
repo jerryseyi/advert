@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->foreignId('customer_id')->nullable();
             $table->foreignId('upload_id')->nullable();
             $table->string('count');
+            $table->string('name');
             $table->timestamps();
         });
     }

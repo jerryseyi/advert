@@ -45,8 +45,8 @@ Route::middleware(['auth:api', 'is.admin'])->group(function () {
     Route::get('/devices/{device}', [\App\Http\Controllers\DeviceController::class, 'show']);
     Route::patch('/devices/{device}', [\App\Http\Controllers\DeviceController::class, 'update']);
 
-    Route::post('/devices/{device}/uploads', [\App\Http\Controllers\DeviceUploadsController::class, 'store']);
-    Route::get('/devices/{device}/uploads', [\App\Http\Controllers\DeviceUploadsController::class, 'index']);
+    Route::post('/devices/{device}/uploads', [\App\Http\Controllers\DeviceUploadsController::class, 'store'])->withoutMiddleware(['is.admin']);
+    Route::get('/devices/{device}/uploads', [\App\Http\Controllers\DeviceUploadsController::class, 'index'])->withoutMiddleware(['is.admin']);
     Route::get('/devices/{device}/uploads/{upload}', [\App\Http\Controllers\DeviceUploadsController::class, 'update']);
     Route::get('/devices/{device}/stats', [\App\Http\Controllers\StatusController::class, 'index']);
 

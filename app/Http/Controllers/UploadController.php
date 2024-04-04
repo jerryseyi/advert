@@ -43,7 +43,8 @@ class UploadController extends Controller
                         'user_id' => $device->user_id ?? null,
                         'upload_id' => $item->id,
                         'customer_id' => $item->user_id,
-                        'count' => 1
+                        'count' => 1,
+                        'name' => $device->name
                     ]);
                 }
             }

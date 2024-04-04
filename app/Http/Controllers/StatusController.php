@@ -24,10 +24,11 @@ class StatusController extends Controller
 
     public function stats(User $user)
     {
+//        return $user->device->load(['user', 'uploads']);
         return $user->load(['device.views' => function ($query) use ($user) {
             $query
                 ->where('customer_id', '=', $user->id)
-                ->select('device_id', View::raw('SUM(count) as count'));
+                ->select('device_id', View::raw('SUM(count) as count'), View::raw('COUNT(upload_id) as upload_count'));
         }, 'uploads']);
     }
 }
