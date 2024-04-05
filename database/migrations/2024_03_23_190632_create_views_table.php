@@ -13,8 +13,10 @@ return new class extends Migration {
             $table->foreignId('user_id')->nullable();
             $table->foreignId('customer_id')->nullable();
             $table->foreignId('upload_id')->nullable();
+            $table->foreignId('owner_device_id')->nullable();
             $table->string('count');
             $table->string('name');
+            $table->string('owners_name');
             $table->timestamps();
         });
     }

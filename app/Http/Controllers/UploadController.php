@@ -32,19 +32,24 @@ class UploadController extends Controller
             ->get();
 
         $uploads->each(function ($item) use ($device) {
-            $view = View::where('upload_id', '=', $item->id)->first();
+            $view = View::where('upload_id', '=', $item->id)
+                        ->where('device_id', '=', $device->id)->first();
 
             if ($view) {
                 $view->increment('count');
             } else {
+//                $name = Device::whereId($item->device_id)->first()->name;
+
                 if (isset($device)) {
                     View::create([
                         'device_id' => $device->id,
                         'user_id' => $device->user_id ?? null,
                         'upload_id' => $item->id,
                         'customer_id' => $item->user_id,
+                        'owner_device_id' => $item->device_id,
                         'count' => 1,
-                        'name' => $device->name
+                        'name' => $device->name,
+                        'owners_name' => $item->device->name,
                     ]);
                 }
             }
@@ -120,6 +125,7 @@ class UploadController extends Controller
         // Update image path in the database
         $upload->image = $imageName;
         $upload->max_tries = $upload->max_tries + 1;
+        $upload->disabled = true;
         $upload->save();
 
         return response()->json(['message' => 'Updated Successfully']);

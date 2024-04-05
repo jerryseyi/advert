@@ -12,23 +12,25 @@ class StatusController extends Controller
     {
         $device = $device->load(['user', 'uploads']);
 
-        $counts = View::query()
-            ->where('customer_id', '=', $device->user_id)
-            ->with('device:id,name')
-            ->select('device_id', View::raw('SUM(count) as count'))
-            ->groupBy('device_id')
-            ->get();
+//        $counts = View::query()
+//            ->where('customer_id', '=', $device->user_id)
+//            ->with('device:id,name')
+//            ->select('device_id', View::raw('SUM(count) as count'))
+//            ->groupBy('device_id')
+//            ->first();
 
-        return response()->json(['device' => $device, 'counts' => $counts]);
+//        $counts = $device->views();
+
+        return response()->json(['device' => $device, 'counts' => $device->views]);
     }
 
     public function stats(User $user)
     {
 //        return $user->device->load(['user', 'uploads']);
-        return $user->load(['device.views' => function ($query) use ($user) {
-            $query
-                ->where('customer_id', '=', $user->id)
-                ->select('device_id', View::raw('SUM(count) as count'), View::raw('COUNT(upload_id) as upload_count'));
+        return $user->load(['device.owners' => function ($query) use ($user) {
+//            $query
+//                ->where('customer_id', '=', $user->id);
+//                ->select('device_id', View::raw('SUM(count) as count'), View::raw('COUNT(upload_id) as upload_count'));
         }, 'uploads']);
     }
 }

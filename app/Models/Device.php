@@ -19,6 +19,8 @@ class Device extends Model
         'disabled' => 'boolean'
     ];
 
+    protected $appends = ['uploadsCount'];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -29,9 +31,19 @@ class Device extends Model
         return $this->hasMany(Upload::class);
     }
 
+    public function getUploadsCountAttribute(): int
+    {
+        return $this->uploads()->count();
+    }
+
     public function views(): HasMany
     {
         return $this->hasMany(View::class);
+    }
+
+    public function owners(): HasMany
+    {
+        return $this->hasMany(View::class, 'owner_device_id');
     }
 
 //    public function getUploadIdsAttribute($value)

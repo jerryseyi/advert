@@ -77,6 +77,7 @@ class DeviceUploadsController extends Controller
 
         // Update image path in the database
         $upload->image = '/uploads/' . $imageName;
+        $upload->disabled = true;
         $upload->save();
 
         return response()->json(['message' => 'Updated Successfully']);
