@@ -12,21 +12,11 @@ class StatusController extends Controller
     {
         $device = $device->load(['user', 'uploads']);
 
-//        $counts = View::query()
-//            ->where('customer_id', '=', $device->user_id)
-//            ->with('device:id,name')
-//            ->select('device_id', View::raw('SUM(count) as count'))
-//            ->groupBy('device_id')
-//            ->first();
-
-//        $counts = $device->views();
-
-        return response()->json(['device' => $device, 'counts' => $device->views]);
+        return response()->json(['device' => $device, 'counts' => $device->owners]);
     }
 
     public function stats(User $user)
     {
-//        return $user->device->load(['user', 'uploads']);
         return $user->load(['device.owners' => function ($query) use ($user) {
 //            $query
 //                ->where('customer_id', '=', $user->id);
