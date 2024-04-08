@@ -39,6 +39,7 @@ Route::middleware(['auth:api', 'is.admin'])->group(function () {
 
     Route::get('users', [\App\Http\Controllers\UsersController::class, 'index']);
     Route::patch('/users/{user}', [\App\Http\Controllers\UsersController::class, 'update']);
+    Route::delete('/users/{user}', [\App\Http\Controllers\UsersController::class, 'destroy']);
 
     Route::get('/devices', [\App\Http\Controllers\DeviceController::class, 'index']);
     Route::post('/devices', [\App\Http\Controllers\DeviceController::class, 'store']);
