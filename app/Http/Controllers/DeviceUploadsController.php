@@ -37,7 +37,7 @@ class DeviceUploadsController extends Controller
         $maxUploads = $device->user->max_upload;
 
         // abort if maximum upload limit reached.
-        if ($device->user->upload_count >= $maxUploads) {
+        if ($device->user->upload_count >= $maxUploads && auth()->user()->role !== 'admin') {
             return response()->json(['error' => 'Maximum upload limit reached.'], 403);
         }
 

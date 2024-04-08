@@ -82,7 +82,7 @@ class UploadController extends Controller
         $maxUploads = $user->max_upload;
 
         // abort if maximum upload limit reached.
-        if ($user->upload_count >= $maxUploads) {
+        if ($user->upload_count >= $maxUploads && auth()->user()->role !== 'admin') {
             return response()->json(['error' => 'Maximum upload limit reached.'], 403);
         }
 
