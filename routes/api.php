@@ -44,6 +44,7 @@ Route::middleware(['auth:api', 'is.admin'])->group(function () {
     Route::post('/devices', [\App\Http\Controllers\DeviceController::class, 'store']);
     Route::get('/devices/{device}', [\App\Http\Controllers\DeviceController::class, 'show']);
     Route::patch('/devices/{device}', [\App\Http\Controllers\DeviceController::class, 'update']);
+    Route::delete('/devices/{device}', [\App\Http\Controllers\DeviceController::class, 'destroy']);
     Route::patch('/devices/{device}/user', [\App\Http\Controllers\UserDeviceController::class, 'update']);
 
     Route::post('/devices/{device}/uploads', [\App\Http\Controllers\DeviceUploadsController::class, 'store'])->withoutMiddleware(['is.admin']);

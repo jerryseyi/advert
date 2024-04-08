@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Device;
+use App\Models\Upload;
 use Illuminate\Http\Request;
 
 class DeviceController extends Controller
@@ -45,6 +46,10 @@ class DeviceController extends Controller
 
     public function destroy(Device $device)
     {
+        // delete uploads associated with the device
+        Upload::where('device_id', $device->id)->get()->each(function ($upload) { $upload->delete(); });
+
+        // delete device
         $device->delete();
 
         return response()->json();
