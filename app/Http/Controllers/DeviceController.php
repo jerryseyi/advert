@@ -41,6 +41,14 @@ class DeviceController extends Controller
 
         $device->update($data);
 
+        if  ($data['expiration_date'] < now()) {
+            Upload::where('device_id', $device->id)->get()
+                ->each(function ($upload) {
+                    $upload->disabled = true;
+                    $upload->save();
+                });
+        }
+
         return $device;
     }
 
