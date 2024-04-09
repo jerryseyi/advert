@@ -3,10 +3,11 @@
 namespace App\Service;
 
 use App\Models\Upload;
+use Illuminate\Support\Collection;
 
 class UploadService
 {
-    public function getUploads($deviceIdsToExclude)
+    public function getUploads($deviceIdsToExclude): Collection
     {
         return Upload::query()
             ->where('disabled', false)
@@ -18,5 +19,12 @@ class UploadService
                 }
             })
             ->get();
+    }
+
+    public function getExcludedImages($ids): Collection
+    {
+        return Upload::query()
+                    ->whereIn('id', $ids)
+                    ->get();
     }
 }
