@@ -7,6 +7,7 @@ use App\Models\Upload;
 use App\Models\User;
 use App\Models\View;
 use App\Policies\UploadPolicy;
+use App\Service\UploadService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -14,22 +15,19 @@ use Illuminate\Support\Facades\Validator;
 
 class UploadController extends Controller
 {
+    protected UploadService $uploadService;
+    public function __construct(UploadService  $uploadService)
+    {
+        $this->uploadService = $uploadService;
+    }
+
     public function index(Request $request)
     {
         $device = Device::where('uid', $request->header('Device'))->firstOrFail();
 
         $deviceIdsToExclude = json_decode($device->upload_ids, true) ?? [];
 
-        $uploads = Upload::query()
-            ->where('disabled', false)
-            ->WhereHas('device', function ($query) use ($deviceIdsToExclude) {
-                if (! empty($deviceIdsToExclude)) {
-                    foreach ($deviceIdsToExclude as $deviceId) {
-                            $query->whereJsonDoesntContain('upload_ids', $deviceId);
-                        }
-                }
-            })
-            ->get();
+        $uploads = $this->uploadService->getUploads($deviceIdsToExclude);
 
         $uploads->each(function ($item) use ($device) {
             $view = View::where('upload_id', '=', $item->id)
