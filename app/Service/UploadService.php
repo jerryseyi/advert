@@ -12,13 +12,7 @@ class UploadService
     {
         return Upload::query()
             ->where('disabled', false)
-            ->WhereDoesntHave('device', function ($query) use ($deviceIdsToExclude) {
-                if (! empty($deviceIdsToExclude)) {
-                    foreach ($deviceIdsToExclude as $deviceId) {
-                        $query->whereJsonDoesntContain('upload_ids', $deviceId);
-                    }
-                }
-            })
+            ->whereNotIn('id', $deviceIdsToExclude)
             ->get();
     }
 
