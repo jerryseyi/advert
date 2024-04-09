@@ -54,7 +54,7 @@ Route::middleware(['auth:api', 'is.admin'])->group(function () {
     Route::get('/devices/{device}/stats', [\App\Http\Controllers\StatusController::class, 'index']);
 
     Route::get('/devices/{device}/images', [\App\Http\Controllers\AdminUploadController::class, 'index']);
-    Route::get('/devices/{device}/images', [\App\Http\Controllers\ExcludedImageController::class, 'index']);
+    Route::get('/devices/{device}/images/excluded', [\App\Http\Controllers\ExcludedImageController::class, 'index']);
 
     Route::post('/uploads/{upload}/enable', [\App\Http\Controllers\UploadStatusController::class, 'store'])->name('upload.enable');
 });
