@@ -14,6 +14,8 @@ class Upload extends Model
 
     protected $appends = ['imagePath', 'excluded'];
 
+    protected $casts = ['disabled' => 'boolean'];
+
     public function device(): BelongsTo
     {
         return $this->belongsTo(Device::class, 'device_id');
