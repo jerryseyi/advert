@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [AuthController::class, 'login'])->name('auth.login');
 
 Route::get('/uploads', [\App\Http\Controllers\UploadController::class, 'index'])->name('upload.index');
+Route::get('/uploads/{upload}', [\App\Http\Controllers\DownloadUploadController::class, 'download'])->name('download-upload.download');
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/user', function (Request $request) {
